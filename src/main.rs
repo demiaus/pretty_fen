@@ -3,11 +3,13 @@ use std::env;
 // TODO: error handling
 // TODO: input validation
 // TODO: help
+// TODO: Flip board
+// TODO: Revert to standard
 
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    // print starting position if no arguments
+    // Print default position if no arguments
     if args.len() == 1 {
         println!(" r  n  b  q  k  b  n  r  /");
         println!(" p  p  p  p  p  p  p  p  /");
@@ -21,22 +23,21 @@ fn main() {
 
     // Handle inputs of one argument
     else if args.len() == 2 {
+
         // First check for help arguments
         if args[1] == "h"
-        || args[1] == "-h"
         || args[1] == "--help"
         || args[1] == "help" {
+            println!("help!");
             todo!("help");
         }
 
         // Check that input is a valid coordinate
-        else if args[1].len() == 2
-        && valid_coord(&args[1]) {
+        if args[1].len() == 2 && valid_coord(&args[1]) {
 
             let coordinates = args[1..].to_vec();
             let mut indices: Vec<(u8, u8)> = Vec::new();
             for c in coordinates {
-                println!("{}", c);
                 indices.extend(parse_an(&c));
             }
             print_range(&indices);
@@ -51,22 +52,60 @@ fn main() {
             }
         }
 
-    // More than one argument means fen + n coordinates
+    // Two arguments
+    } else if args.len() == 3 {
+
+        if args[1] == "r"
+        || args[1] == "--revert"
+        || args[1] == "revert" {
+            println!("Reverting!");
+            println!("{}", revert(&args[2]));
+        }
+
     } else {
-        let fen = &args[1..];
+
         let coordinates = args[2..].to_vec();
         let mut indices: Vec<(u8, u8)> = Vec::new();
 
         for c in coordinates {
-            println!("{}", c);
             indices.extend(parse_an(&c));
         }
         print_range(&indices);
+    }
 }
+
+fn revert(s: &str) -> String {
+
+    let mut r = s.replace(&[' ', '(', ')', '\n',], "").to_string();
+    r = r.replace("........", "8");
+    r = r.replace(".......", "7");
+    r = r.replace("......", "6");
+    r = r.replace(".....", "5");
+    r = r.replace("....", "4");
+    r = r.replace("...", "3");
+    r = r.replace("..", "2");
+    r = r.replace(".", "1");
+    r
 }
 
 fn valid_coord(c: &str) -> bool {
-    true
+    c.len() == 2
+        && valid_file(c.chars().nth(0).unwrap())
+        && valid_rank(c.chars().nth(1).unwrap())
+}
+
+fn valid_file(f: char) -> bool {
+    match f {
+        'a'..='h' => true,
+        _ => false
+    }
+}
+
+fn valid_rank(r: char) -> bool {
+    match r {
+        '1'..='8' => true,
+        _ => false
+    }
 }
 
 fn parse_an(s: &str) -> Vec<(u8, u8)> {
@@ -126,12 +165,12 @@ fn format(input: &str) -> Result<String, i32> {
 fn print_range(indices: &Vec<(u8, u8)>) {
 
     let r1 = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
-    let r7 = ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'];
+    let r2 = ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'];
     let r3 = ['.', '.', '.', '.', '.', '.', '.', '.'];
     let r4 = ['.', '.', '.', '.', '.', '.', '.', '.'];
     let r5 = ['.', '.', '.', '.', '.', '.', '.', '.'];
     let r6 = ['.', '.', '.', '.', '.', '.', '.', '.'];
-    let r2 = ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'];
+    let r7 = ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'];
     let r8 = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'];
 
     let b = [r1, r2, r3, r4, r5, r6, r7, r8];
