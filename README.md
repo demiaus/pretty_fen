@@ -51,8 +51,10 @@ Supports highlighting using parentheses:
 ```
 
 ### TODO:
-- Option to Flip Board
-- Add option to print coordinates on the edge of the board
-- Add highlighting using coordinates
+- Error handling
+- Input validation
+- Help
 - Read PGN
     - Highlight the latest move
+- Flip board
+- Add option to print coordinates on the edge of the board

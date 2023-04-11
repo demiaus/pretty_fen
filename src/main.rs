@@ -4,7 +4,6 @@ use std::env;
 // TODO: input validation
 // TODO: help
 // TODO: Flip board
-// TODO: Revert to standard
 
 fn main() {
     let args: Vec<String> = env::args().collect();
