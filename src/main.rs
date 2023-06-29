@@ -57,7 +57,6 @@ fn main() {
         if args[1] == "r"
         || args[1] == "--revert"
         || args[1] == "revert" {
-            println!("Reverting!");
             println!("{}", revert(&args[2]));
         }
 
@@ -132,7 +131,7 @@ fn parse_an(s: &str) -> Vec<(u8, u8)> {
 }
 
 fn format(input: &str) -> Result<String, i32> {
-    let mut s = " ".to_string();
+    let mut s = "".to_string();
     for c in input.chars() {
         match c {
             ' ' => break,
@@ -140,22 +139,30 @@ fn format(input: &str) -> Result<String, i32> {
                 if c.is_numeric() {
                     let n = c.to_digit(10).unwrap();
                     for _ in 0..n {
-                        s.push('.');
-                        s.push(' ');
+                        s.push_str(" . ");
                     }
                 } else {
-                    s.push(c);
+                    match c {
+                        '(' | ')' => {
+                            if s.len() > 0 {
+                                let tmp = s.pop();
+                                if tmp.unwrap() == '\n' {
+                                    s.push('\n')
+                                }
+                            }
+                            s.push(c);
+                        },
+                        '/' => {
+                            s.push_str("/\n");
+                        },
+                        _ => s.push_str(&format!(" {} ", c))
+                    }
                 }
             }
         }
-        s.push(' ');
     }
-    s = s.replace("/", "/\n ");
-    s = s.replace("  ", " ");
-    s = s.replace(" (", "(");
-    s = s.replace(" )", ")");
-    s = s.replace(") ", ")");
     s = s.replace("( ", "(");
+    s = s.replace(" )", ")");
     s.pop();
 
     Ok(s)
