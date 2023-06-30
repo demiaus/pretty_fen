@@ -57,7 +57,6 @@ fn main() {
         if args[1] == "r"
         || args[1] == "--revert"
         || args[1] == "revert" {
-            println!("Reverting!");
             println!("{}", revert(&args[2]));
         }
 
